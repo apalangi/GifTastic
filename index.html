@@ -1,0 +1,108 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<div class="container">
+    
+ 
+        <script type="text/javascript">
+        
+            var topics = ["Frogs", "Unicorns", "Puppies", "Mouse", "Kitten", "Orca",
+         "Lipizzaner"];
+        
+
+            $(document).ready(function(){
+                
+                draw();
+                
+            });
+
+            function add() {
+
+                    topics.push($("#search").val());
+                    draw();
+            }
+            function draw() {
+                $("#buttonarea").html();
+                topics.forEach(function (item, index) {
+                    $("#buttonarea").prepend("<button onclick='search(this);'>" + item + "</button>")
+                });
+            }
+
+            function search(btn) {
+                var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+                $(btn).html() + "&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&limit=10";
+
+                    $.ajax({
+                url: queryURL,
+                method: "GET"
+            })
+                .then(function(response) {
+                var results = response.data;
+
+                for (var i = 0; i < results.length; i++) {
+                    var gifDiv = $("<div class='col-4'>");
+
+                    var rating = results[i].rating;
+
+                    var p = $("<p>").text("Rating: " + rating);
+
+                    var personImage = $("<img>");
+                    personImage.attr("src", results[i].images.fixed_height.url);
+                    personImage.attr("src", still);
+                    personImage.attr("data-still", still);
+                    personImage.attr("data-animate", animated);
+                    personImage.attr("data-state", "still");
+                    personImage.addClass("topic-image");
+
+                    gifDiv.prepend(p);
+                    gifDiv.prepend(personImage);
+
+                    $("#gifs-appear-here").prepend(gifDiv);
+
+
+                    var animated = results[i].images.fixed_height.url;
+                    var still = results[i].images.fixed_height_still.url;
+
+
+
+
+
+                }
+                });
+
+                    }
+                    $(document).on("click", ".topic-image", function() {
+
+                    var state = $(this).attr("data-state");
+
+                    if (state === "still") {
+                     $(this).attr("src", $(this).attr("data-animate"));
+                     $(this).attr("data-state", "animate");
+                    }
+                    else {
+                     $(this).attr("src", $(this).attr("data-still"));
+                     $(this).attr("data-state", "still");
+                    }
+                    });
+        </script>
+
+</head>
+
+<body>
+    <div id="buttonarea"></div>
+<div class="row">
+    <div class="col-8">
+        <div class="row" id="gifs-appear-here">
+        </div>
+    </div>
+    <div class="col=4">
+        <input id="search"><br>
+        <button id="submit" onclick="add();">Submit</button>
+    </div>
+</div>
+</body>
+</div>
+</html>
